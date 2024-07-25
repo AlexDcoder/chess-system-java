@@ -5,7 +5,6 @@ import module.boardgame.Piece;
 import module.boardgame.Position;
 import module.chess.chess_pieces.*;
 
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -92,9 +91,9 @@ public class ChessMatch {
             }
         }
 
-        check =(testCheck(oponnet(currentPlayer))) ? true : false;
+        check =(testCheck(opponent(currentPlayer))) ? true : false;
 
-        if(testCheckMate(oponnet(currentPlayer))) {
+        if(testCheckMate(opponent(currentPlayer))) {
             checkMate = true;
         } else {
             nextTurn();
@@ -115,7 +114,7 @@ public class ChessMatch {
             throw new IllegalStateException(("There is no piece to be promoted"));
         }
         if (!type.equals("b") && !type.equals("N") && !type.equals("R") && !type.equals("Q")) {
-            throw new InvalidParameterException("Invalid type for promotion");
+            return promoted;
         }
 
         Position pos = promoted.getChessPosition().toPosition();
@@ -249,7 +248,7 @@ public class ChessMatch {
         currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE;
     }
 
-    private Color oponnet(Color color) {
+    private Color opponent(Color color) {
         return (color == Color.WHITE)? Color.BLACK : Color.WHITE;
     }
 
@@ -265,7 +264,7 @@ public class ChessMatch {
 
     private boolean testCheck (Color color) {
         Position kingPosition = king(color).getChessPosition().toPosition();
-        List<Piece> opponentPieces = piecesOnTheBoard.stream().filter(x -> ((ChessPiece)x).getColor() == oponnet(color)).collect(Collectors.toList());
+        List<Piece> opponentPieces = piecesOnTheBoard.stream().filter(x -> ((ChessPiece)x).getColor() == opponent(color)).collect(Collectors.toList());
         for (Piece p : opponentPieces) {
             boolean[][] mat = p.possibleMoves();
             if (mat[kingPosition.getRow()][kingPosition.getColumn()]) {
